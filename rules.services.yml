@@ -34,6 +34,21 @@ services:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
+  rules.component_repository:
+    class: Drupal\rules\Engine\RulesComponentRepository
+    tags:
+      - { name: service_collector, tag: 'rules.component_resolver', call: addComponentResolver }
+    calls:
+      - [addComponentResolver, ['rules_component', '@rules.component_resolver.component_config']]
+      - [addComponentResolver, ['rules_event', '@rules.component_resolver.event_component']]
+  rules.component_resolver.component_config:
+    class: Drupal\rules\ComponentConfigResolver\ComponentConfigResolver
+    tags:
+      - { name: rules.component_resolver }
+  rules.component_resolver.event_component:
+    class: Drupal\rules\ComponentConfigResolver\EventComponentResolver
+    tags:
+      - { name: rules.component_resolver }
   rules.ui_route_enhancer:
     class: Drupal\rules\Routing\RulesUiRouteEnhancer
     arguments: ['@plugin.manager.rules_ui']
