@@ -38,17 +38,14 @@ services:
     class: Drupal\rules\Engine\RulesComponentRepository
     tags:
       - { name: service_collector, tag: 'rules.component_resolver', call: addComponentResolver }
-    calls:
-      - [addComponentResolver, ['rules_component', '@rules.component_resolver.component_config']]
-      - [addComponentResolver, ['rules_event', '@rules.component_resolver.event_component']]
   rules.component_resolver.component_config:
     class: Drupal\rules\ComponentConfigResolver\ComponentConfigResolver
     tags:
-      - { name: rules.component_resolver }
+      - { name: rules.component_resolver, resolver_name: rules_component }
   rules.component_resolver.event_component:
     class: Drupal\rules\ComponentConfigResolver\EventComponentResolver
     tags:
-      - { name: rules.component_resolver }
+      - { name: rules.component_resolver, resolver_name: rules_event }
   rules.ui_route_enhancer:
     class: Drupal\rules\Routing\RulesUiRouteEnhancer
     arguments: ['@plugin.manager.rules_ui']
