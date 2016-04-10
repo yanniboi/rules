@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\ComponentConfigResolver\EventComponentResolver.
+ * Contains \Drupal\rules\ComponentResolver\EventComponentResolver.
  */
 
-namespace Drupal\rules\ComponentConfigResolver;
+namespace Drupal\rules\ComponentResolver;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;

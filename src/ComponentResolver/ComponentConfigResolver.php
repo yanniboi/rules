@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\ComponentConfigResolver\ComponentConfigResolver.
+ * Contains \Drupal\rules\ComponentResolver\ComponentConfigResolver.
  */
 
-namespace Drupal\rules\ComponentConfigResolver;
+namespace Drupal\rules\ComponentResolver;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rules\Engine\RulesComponentResolverInterface;

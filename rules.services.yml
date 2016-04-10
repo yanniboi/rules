@@ -36,14 +36,23 @@ services:
       - { name: 'event_subscriber' }
   rules.component_repository:
     class: Drupal\rules\Engine\RulesComponentRepository
+    arguments: ['@rules.cache', '@language_manager']
     tags:
       - { name: service_collector, tag: 'rules.component_resolver', call: addComponentResolver }
+  rules.cache:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [rules]
   rules.component_resolver.component_config:
-    class: Drupal\rules\ComponentConfigResolver\ComponentConfigResolver
+    class: Drupal\rules\ComponentResolver\ComponentConfigResolver
+    arguments: ['@entity_type.manager']
     tags:
       - { name: rules.component_resolver, resolver_name: rules_component }
   rules.component_resolver.event_component:
-    class: Drupal\rules\ComponentConfigResolver\EventComponentResolver
+    class: Drupal\rules\ComponentResolver\EventComponentResolver
+    arguments: ['@entity_type.manager', '@plugin.manager.rules_expression']
     tags:
       - { name: rules.component_resolver, resolver_name: rules_event }
   rules.ui_route_enhancer:
