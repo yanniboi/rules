@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Controller\RulesReactionController.
- */
-
 namespace Drupal\rules\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-
 
 /**
  * Provides route controllers for Reaction Rules.
