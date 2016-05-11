@@ -119,8 +119,10 @@ class GenericEventSubscriber implements EventSubscriberInterface {
     // variables added by one rule are not interfering with the variables of
     // another rule.
     foreach ($triggered_events as $triggered_event) {
-      // @todo Only load active reaction rules here.
-      $configs = $storage->loadByProperties(['events.*.event_name' => $triggered_event]);
+      $configs = $storage->loadByProperties([
+        'events.*.event_name' => $triggered_event,
+        'status' => 1,
+      ]);
 
       // Loop over all rules and execute them.
       foreach ($configs as $config) {

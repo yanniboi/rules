@@ -82,6 +82,12 @@ abstract class RulesComponentFormBase extends EntityForm {
       '#title' => $this->t('Description'),
     ];
 
+    $form['settings']['status'] = [
+      '#type' => 'checkbox',
+      '#default_value' => $this->entity->status(),
+      '#title' => $this->t('Active'),
+    ];
+
     return parent::form($form, $form_state);
   }
 
