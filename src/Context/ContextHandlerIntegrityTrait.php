@@ -134,7 +134,10 @@ trait ContextHandlerIntegrityTrait {
     $target_type = $context_definition->getDataDefinition()->getDataType();
 
     // Special case any and entity target types for now.
-    if ($target_type == 'any' || ($target_type == 'entity' && strpos($provided->getDataType(), 'entity:') !== FALSE)) {
+    if ($target_type == 'any' ||
+      ($target_type == 'entity' && strpos($provided->getDataType(), 'entity:') !== FALSE) ||
+      ($target_type == 'list' && $context_definition->isMultiple())
+    ) {
       return;
     }
     if ($target_type != $provided->getDataType()) {

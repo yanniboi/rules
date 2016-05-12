@@ -121,7 +121,11 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
     // passing the defined context as arguments.
     $args = [];
     foreach ($this->getContextDefinitions() as $name => $definition) {
-      $args[$name] = $this->getContextValue($name);
+      $value = $this->getContextValue($name);
+      if ($definition->isMultiple() && !is_array($value)) {
+        $value = [$value];
+      }
+      $args[$name] = $value;
     }
     call_user_func_array([$this, 'doExecute'], $args);
   }
