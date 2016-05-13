@@ -41,4 +41,13 @@ class RuleForm implements ExpressionFormInterface {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // @todo implement drag and drop for conditions.
+    //$this->rule->getConditions()->getFormHandler()->submitForm($form, $form_state);
+    $this->rule->getActions()->getFormHandler()->submitForm($form, $form_state);
+  }
+
 }

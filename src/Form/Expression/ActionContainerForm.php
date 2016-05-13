@@ -39,34 +39,70 @@ class ActionContainerForm implements ExpressionFormInterface {
     ];
 
     $form['action_table']['table'] = [
+      '#type' => 'table',
       '#theme' => 'table',
-      '#caption' => $this->t('Actions'),
-      '#header' => [$this->t('Elements'), $this->t('Operations')],
-      '#empty' => t('None'),
+      '#header' => [
+        $this->t('Elements'),
+        $this->t('Weight'),
+        [
+          'data' => $this->t('Operations'),
+          'colspan' => 3,
+        ],
+      ],
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'action-weight',
+          'limit' => 1,
+        ],
+      ],
     ];
 
+    $form['action_table']['table']['#empty'] = $this->t('None');
     foreach ($this->actionSet as $action) {
-      $form['action_table']['table']['#rows'][] = [
-        'element' => $action->getLabel(),
-        'operations' => [
-          'data' => [
-            '#type' => 'dropbutton',
-            '#links' => [
-              'edit' => [
-                'title' => $this->t('Edit'),
-                'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
-                  'uuid' => $action->getUuid(),
-                ]),
-              ],
-              'delete' => [
-                'title' => $this->t('Delete'),
-                'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
-                  'uuid' => $action->getUuid(),
-                ]),
-              ],
+      $uuid = $action->getUuid();
+      $form['action_table']['table'][$uuid]['#item'] = $action;
+
+      // TableDrag: Mark the table row as draggable.
+      $form['action_table']['table'][$uuid]['#attributes']['class'][] = 'draggable';
+
+      // TableDrag: Sort the table row according to its existing/configured weight.
+      $form['action_table']['table'][$uuid]['#weight'] = $action->getWeight();
+      $form['action_table']['table'][$uuid]['title'] = ['#markup' => $action->getLabel()];
+
+      $form['action_table']['table'][$uuid]['weight'] = [
+        '#type' => 'weight',
+        '#delta' => 50,
+        '#default_value' => 0,
+        '#attributes' => ['class' => ['action-weight']]
+      ];
+
+      // Operations (dropbutton) column.
+      $form['action_table']['table'][$uuid]['operations'] = [
+        'data' => [
+          '#type' => 'dropbutton',
+          '#links' => [
+            'edit' => [
+              'title' => $this->t('Edit'),
+              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
+                'uuid' => $uuid,
+              ]),
+            ],
+            'delete' => [
+              'title' => $this->t('Delete'),
+              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
+                'uuid' => $uuid,
+              ]),
             ],
           ],
         ],
+      ];
+
+      $form['action_table']['table'][$uuid]['id'] = [
+        '#type' => 'hidden',
+        '#value' => $uuid,
+        '#attributes' => ['class' => ['action-id']]
       ];
     }
 
@@ -83,6 +119,24 @@ class ActionContainerForm implements ExpressionFormInterface {
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValue('table');
+    $component = $this->getRulesUiHandler()->getComponent();
+    /* @var $rule_expression \Drupal\rules\Plugin\RulesExpression\Rule */
+    $rule_expression = $component->getExpression();
+
+    foreach ($values as $uuid => $expression) {
+      $action = $rule_expression->getExpression($uuid);
+      $action->setWeight($expression['weight']);
+      $action->setConfiguration($action->getConfiguration());
+    }
+
+    $this->getRulesUiHandler()->updateComponent($component);
   }
 
 }

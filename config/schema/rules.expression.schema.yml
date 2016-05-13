@@ -47,6 +47,9 @@ rules_expression.rules_action:
     uuid:
       type: string
       label: 'UUID'
+    weight:
+      type: integer
+      label: 'Weight'
     action_id:
       type: string
       label: 'Action plugin ID'
