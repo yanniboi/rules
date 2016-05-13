@@ -2,8 +2,6 @@
 
 namespace Drupal\Tests\rules\Kernel;
 
-use Drupal\Core\Language\LanguageInterface;
-
 /**
  * Performs tests on the pluggable mailing framework.
  *
@@ -36,7 +34,7 @@ class RulesMailTest extends RulesDrupalTestBase {
       ->save();
 
     // Reset the state variable that holds sent messages.
-    \Drupal::state()->set('system.test_mail_collector', []);
+    $this->container->get('state')->set('system.test_mail_collector', []);
 
     $this->actionManager = $this->container->get('plugin.manager.rules_action');
   }
@@ -45,34 +43,29 @@ class RulesMailTest extends RulesDrupalTestBase {
    * Checks the From: and Reply-to: headers.
    */
   public function testSubjectAndBody() {
-    // Create action and add context values.
+    // Create action to send email.
     $action = $this->actionManager->createInstance('rules_send_email');
 
-    $to = ['mail@example.com'];
-    $action->setContextValue('to', $to)
-      ->setContextValue('subject', 'subject')
-      ->setContextValue('message', 'hello');
-
     $params = [
+      'to' => ['mail@example.com'],
       'subject' => 'subject',
       'message' => 'hello',
     ];
 
+    // Add context values to action.
+    $action->setContextValue('to', $params['to'])
+      ->setContextValue('subject', $params['subject'])
+      ->setContextValue('message', $params['message']);
+
     // Send email.
-    \Drupal::service('plugin.manager.mail')->mail(
-      'rules', 'rules_action_mail_' . $action->getPluginId(),
-      $to[0],
-      LanguageInterface::LANGCODE_SITE_DEFAULT,
-      $params,
-      NULL
-    );
+    $action->execute();
 
     // Retrieve sent message.
-    $captured_emails = \Drupal::state()->get('system.test_mail_collector');
+    $captured_emails = $this->container->get('state')->get('system.test_mail_collector');
     $sent_message = end($captured_emails);
 
     // Check to make sure that our subject and body are as expected.
-    $this->assertEquals($sent_message['to'], $to[0]);
+    $this->assertEquals($sent_message['to'], $params['to'][0]);
     $this->assertEquals($sent_message['subject'], $params['subject']);
     // Need to trim the email body to get rid of newline at end.
     $this->assertEquals(trim($sent_message['body']), $params['message']);
