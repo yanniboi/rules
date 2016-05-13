@@ -154,7 +154,6 @@ function rules_cron() {
  * Implements hook_mail().
  */
 function rules_mail($key, &$message, $params) {
-  $message['subject'] .= str_replace(array("\r", "\n"), '', $params['subject']);
+  $message['subject'] .= str_replace(["\r", "\n"], '', $params['subject']);
   $message['body'][] = $params['message'];
 }
-
