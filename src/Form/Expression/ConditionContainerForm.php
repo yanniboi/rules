@@ -50,7 +50,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
         ],
       ],
       '#attributes' => [
-        'id' => 'rules_conditions_table'
+        'id' => 'rules_conditions_table',
       ],
       '#tabledrag' => [
         [
@@ -81,7 +81,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
       // TableDrag: Mark the table row as draggable.
       $row['#attributes']['class'][] = 'draggable';
 
-      // TableDrag: Sort the table row according to its existing/configured weight.
+      // TableDrag: Sort the table row according to its weight.
       $row['#weight'] = $condition->getWeight();
       $row['title'] = ['#markup' => $condition->getLabel()];
 
@@ -139,10 +139,12 @@ class ConditionContainerForm implements ExpressionFormInterface {
     /* @var $rule_expression \Drupal\rules\Plugin\RulesExpression\Rule */
     $rule_expression = $component->getExpression();
 
-    foreach ($values as $uuid => $expression) {
-      $action = $rule_expression->getExpression($uuid);
-      $action->setWeight($expression['weight']);
-      $action->setConfiguration($action->getConfiguration());
+    if ($values) {
+      foreach ($values as $uuid => $expression) {
+        $action = $rule_expression->getExpression($uuid);
+        $action->setWeight($expression['weight']);
+        $action->setConfiguration($action->getConfiguration());
+      }
     }
 
     $this->getRulesUiHandler()->updateComponent($component);

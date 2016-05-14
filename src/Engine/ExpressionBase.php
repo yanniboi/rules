@@ -180,7 +180,7 @@ abstract class ExpressionBase extends PluginBase implements ExpressionInterface 
   /**
    * {@inheritdoc}
    */
-  public function expressionSortHelper($a, $b) {
+  public function expressionSortHelper(ExpressionInterface $a, ExpressionInterface $b) {
     $a_weight = $a->getWeight();
     $b_weight = $b->getWeight();
     if ($a_weight == $b_weight) {

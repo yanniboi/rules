@@ -49,7 +49,7 @@ class ActionContainerForm implements ExpressionFormInterface {
         ],
       ],
       '#attributes' => [
-        'id' => 'rules_actions_table'
+        'id' => 'rules_actions_table',
       ],
       '#tabledrag' => [
         [
@@ -138,10 +138,12 @@ class ActionContainerForm implements ExpressionFormInterface {
     /* @var $rule_expression \Drupal\rules\Plugin\RulesExpression\Rule */
     $rule_expression = $component->getExpression();
 
-    foreach ($values as $uuid => $expression) {
-      $action = $rule_expression->getExpression($uuid);
-      $action->setWeight($expression['weight']);
-      $action->setConfiguration($action->getConfiguration());
+    if ($values) {
+      foreach ($values as $uuid => $expression) {
+        $action = $rule_expression->getExpression($uuid);
+        $action->setWeight($expression['weight']);
+        $action->setConfiguration($action->getConfiguration());
+      }
     }
 
     $this->getRulesUiHandler()->updateComponent($component);
