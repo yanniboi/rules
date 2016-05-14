@@ -63,7 +63,7 @@ class ActionContainerForm implements ExpressionFormInterface {
     $form['action_table']['table']['#empty'] = $this->t('None');
 
     // Get hold of actions.
-    // @todo See if we can have a getExpressions method of ExpressionContainerBase.
+    // @todo See if we can add getExpressions method of ExpressionContainerBase.
     $actions = [];
     foreach ($this->actionSet as $action) {
       $actions[] = $action;
@@ -75,35 +75,37 @@ class ActionContainerForm implements ExpressionFormInterface {
     foreach ($actions as $action) {
       /* @var $action \Drupal\rules\Engine\ExpressionInterface */
       $uuid = $action->getUuid();
+      $row = &$form['action_table']['table'][$uuid];
 
       // TableDrag: Mark the table row as draggable.
-      $form['action_table']['table'][$uuid]['#attributes']['class'][] = 'draggable';
+      $row['#attributes']['class'][] = 'draggable';
 
-      // TableDrag: Sort the table row according to its existing/configured weight.
-      $form['action_table']['table'][$uuid]['#weight'] = $action->getWeight();
-      $form['action_table']['table'][$uuid]['title'] = ['#markup' => $action->getLabel()];
+      // TableDrag: Sort the table row according to its existing weight.
+      $row['#weight'] = $action->getWeight();
+      $row['title'] = ['#markup' => $action->getLabel()];
 
-      $form['action_table']['table'][$uuid]['weight'] = [
+      $row['weight'] = [
         '#type' => 'weight',
         '#delta' => 50,
         '#default_value' => $action->getWeight(),
-        '#attributes' => ['class' => ['action-weight']]
+        '#attributes' => ['class' => ['action-weight']],
       ];
 
       // Operations (dropbutton) column.
-      $form['action_table']['table'][$uuid]['operations'] = [
+      $rules_ui_handler = $this->getRulesUiHandler();
+      $row['operations'] = [
         'data' => [
           '#type' => 'dropbutton',
           '#links' => [
             'edit' => [
               'title' => $this->t('Edit'),
-              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
+              'url' => $rules_ui_handler->getUrlFromRoute('expression.edit', [
                 'uuid' => $uuid,
               ]),
             ],
             'delete' => [
               'title' => $this->t('Delete'),
-              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
+              'url' => $rules_ui_handler->getUrlFromRoute('expression.delete', [
                 'uuid' => $uuid,
               ]),
             ],

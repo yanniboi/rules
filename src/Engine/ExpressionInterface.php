@@ -80,9 +80,10 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
   public function setUuid($uuid);
 
   /**
-   * Returns the weight of this expression if it is nested in another expression.
+   * Returns the weight of this expression if it is nested in another
+   * expression.
    *
-   * @return integer
+   * @return int
    *   The weight if this expression is nested.
    */
   public function getWeight();
@@ -90,7 +91,7 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
   /**
    * Sets the weight of this expression in an expression tree.
    *
-   * @param integer $weight
+   * @param int $weight
    *   The weight to set.
    */
   public function setWeight($weight);

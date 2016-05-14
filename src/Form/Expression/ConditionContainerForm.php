@@ -64,7 +64,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
     $form['conditions']['table']['#empty'] = $this->t('None');
 
     // Get hold of conditions.
-    // @todo See if we can have a getExpressions method of ExpressionContainerBase.
+    // @todo See if we can add getExpressions method of ExpressionContainerBase.
     $conditions = [];
     foreach ($this->conditionContainer as $condition) {
       $conditions[] = $condition;
@@ -76,35 +76,37 @@ class ConditionContainerForm implements ExpressionFormInterface {
     foreach ($conditions as $condition) {
       /* @var $condition \Drupal\rules\Engine\ExpressionInterface */
       $uuid = $condition->getUuid();
+      $row = &$form['conditions']['table'][$uuid];
 
       // TableDrag: Mark the table row as draggable.
-      $form['conditions']['table'][$uuid]['#attributes']['class'][] = 'draggable';
+      $row['#attributes']['class'][] = 'draggable';
 
       // TableDrag: Sort the table row according to its existing/configured weight.
-      $form['conditions']['table'][$uuid]['#weight'] = $condition->getWeight();
-      $form['conditions']['table'][$uuid]['title'] = ['#markup' => $condition->getLabel()];
+      $row['#weight'] = $condition->getWeight();
+      $row['title'] = ['#markup' => $condition->getLabel()];
 
-      $form['conditions']['table'][$uuid]['weight'] = [
+      $row['weight'] = [
         '#type' => 'weight',
         '#delta' => 50,
         '#default_value' => $condition->getWeight(),
-        '#attributes' => ['class' => ['condition-weight']]
+        '#attributes' => ['class' => ['condition-weight']],
       ];
 
       // Operations (dropbutton) column.
-      $form['conditions']['table'][$uuid]['operations'] = [
+      $rules_ui_handler = $this->getRulesUiHandler();
+      $row['operations'] = [
         'data' => [
           '#type' => 'dropbutton',
           '#links' => [
             'edit' => [
               'title' => $this->t('Edit'),
-              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
+              'url' => $rules_ui_handler->getUrlFromRoute('expression.edit', [
                 'uuid' => $condition->getUuid(),
               ]),
             ],
             'delete' => [
               'title' => $this->t('Delete'),
-              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
+              'url' => $rules_ui_handler->getUrlFromRoute('expression.delete', [
                 'uuid' => $condition->getUuid(),
               ]),
             ],

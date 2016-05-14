@@ -45,8 +45,10 @@ class RuleForm implements ExpressionFormInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->rule->getConditions()->getFormHandler()->submitForm($form, $form_state);
-    $this->rule->getActions()->getFormHandler()->submitForm($form, $form_state);
+    $conditions = $this->rule->getConditions();
+    $conditions->getFormHandler()->submitForm($form, $form_state);
+    $actions = $this->rule->getActions();
+    $actions->getFormHandler()->submitForm($form, $form_state);
   }
 
 }
