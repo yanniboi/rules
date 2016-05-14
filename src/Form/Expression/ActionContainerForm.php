@@ -40,7 +40,6 @@ class ActionContainerForm implements ExpressionFormInterface {
 
     $form['action_table']['table'] = [
       '#type' => 'table',
-      '#theme' => 'table',
       '#header' => [
         $this->t('Elements'),
         $this->t('Weight'),
@@ -49,20 +48,32 @@ class ActionContainerForm implements ExpressionFormInterface {
           'colspan' => 3,
         ],
       ],
+      '#attributes' => [
+        'id' => 'rules_actions_table'
+      ],
       '#tabledrag' => [
         [
           'action' => 'order',
           'relationship' => 'sibling',
           'group' => 'action-weight',
-          'limit' => 1,
         ],
       ],
     ];
 
     $form['action_table']['table']['#empty'] = $this->t('None');
+
+    // Get hold of actions.
+    // @todo See if we can have a getExpressions method of ExpressionContainerBase.
+    $actions = [];
     foreach ($this->actionSet as $action) {
+      $actions[] = $action;
+    }
+
+    // Sort actions by weight.
+    @uasort($actions, [$this->actionSet, 'expressionSortHelper']);
+
+    foreach ($actions as $action) {
       $uuid = $action->getUuid();
-      $form['action_table']['table'][$uuid]['#item'] = $action;
 
       // TableDrag: Mark the table row as draggable.
       $form['action_table']['table'][$uuid]['#attributes']['class'][] = 'draggable';
@@ -74,7 +85,7 @@ class ActionContainerForm implements ExpressionFormInterface {
       $form['action_table']['table'][$uuid]['weight'] = [
         '#type' => 'weight',
         '#delta' => 50,
-        '#default_value' => 0,
+        '#default_value' => $action->getWeight(),
         '#attributes' => ['class' => ['action-weight']]
       ];
 
@@ -97,12 +108,6 @@ class ActionContainerForm implements ExpressionFormInterface {
             ],
           ],
         ],
-      ];
-
-      $form['action_table']['table'][$uuid]['id'] = [
-        '#type' => 'hidden',
-        '#value' => $uuid,
-        '#attributes' => ['class' => ['action-id']]
       ];
     }
 

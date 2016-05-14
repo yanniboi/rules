@@ -177,4 +177,17 @@ abstract class ExpressionBase extends PluginBase implements ExpressionInterface 
     $this->weight = $weight;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function expressionSortHelper($a, $b) {
+    $a_weight = $a->getWeight();
+    $b_weight = $b->getWeight();
+    if ($a_weight == $b_weight) {
+      return 0;
+    }
+
+    return ($a_weight < $b_weight) ? -1 : 1;
+  }
+
 }
