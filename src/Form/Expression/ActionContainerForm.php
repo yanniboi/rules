@@ -73,6 +73,7 @@ class ActionContainerForm implements ExpressionFormInterface {
     @uasort($actions, [$this->actionSet, 'expressionSortHelper']);
 
     foreach ($actions as $action) {
+      /* @var $action \Drupal\rules\Engine\ExpressionInterface */
       $uuid = $action->getUuid();
 
       // TableDrag: Mark the table row as draggable.

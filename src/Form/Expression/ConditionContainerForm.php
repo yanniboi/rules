@@ -39,31 +39,74 @@ class ConditionContainerForm implements ExpressionFormInterface {
     ];
 
     $form['conditions']['table'] = [
-      '#theme' => 'table',
+      '#type' => 'table',
       '#caption' => $this->t('Conditions'),
-      '#header' => [$this->t('Elements'), $this->t('Operations')],
-      '#empty' => t('None'),
+      '#header' => [
+        $this->t('Elements'),
+        $this->t('Weight'),
+        [
+          'data' => $this->t('Operations'),
+          'colspan' => 3,
+        ],
+      ],
+      '#attributes' => [
+        'id' => 'rules_conditions_table'
+      ],
+      '#tabledrag' => [
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'condition-weight',
+        ],
+      ],
     ];
 
+    $form['conditions']['table']['#empty'] = $this->t('None');
+
+    // Get hold of conditions.
+    // @todo See if we can have a getExpressions method of ExpressionContainerBase.
+    $conditions = [];
     foreach ($this->conditionContainer as $condition) {
-      $form['conditions']['table']['#rows'][] = [
-        'element' => $condition->getLabel(),
-        'operations' => [
-          'data' => [
-            '#type' => 'dropbutton',
-            '#links' => [
-              'edit' => [
-                'title' => $this->t('Edit'),
-                'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
-                  'uuid' => $condition->getUuid(),
-                ]),
-              ],
-              'delete' => [
-                'title' => $this->t('Delete'),
-                'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
-                  'uuid' => $condition->getUuid(),
-                ]),
-              ],
+      $conditions[] = $condition;
+    }
+
+    // Sort conditions by weight.
+    @uasort($conditions, [$this->conditionContainer, 'expressionSortHelper']);
+
+    foreach ($conditions as $condition) {
+      /* @var $condition \Drupal\rules\Engine\ExpressionInterface */
+      $uuid = $condition->getUuid();
+
+      // TableDrag: Mark the table row as draggable.
+      $form['conditions']['table'][$uuid]['#attributes']['class'][] = 'draggable';
+
+      // TableDrag: Sort the table row according to its existing/configured weight.
+      $form['conditions']['table'][$uuid]['#weight'] = $condition->getWeight();
+      $form['conditions']['table'][$uuid]['title'] = ['#markup' => $condition->getLabel()];
+
+      $form['conditions']['table'][$uuid]['weight'] = [
+        '#type' => 'weight',
+        '#delta' => 50,
+        '#default_value' => $condition->getWeight(),
+        '#attributes' => ['class' => ['condition-weight']]
+      ];
+
+      // Operations (dropbutton) column.
+      $form['conditions']['table'][$uuid]['operations'] = [
+        'data' => [
+          '#type' => 'dropbutton',
+          '#links' => [
+            'edit' => [
+              'title' => $this->t('Edit'),
+              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
+                'uuid' => $condition->getUuid(),
+              ]),
+            ],
+            'delete' => [
+              'title' => $this->t('Delete'),
+              'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
+                'uuid' => $condition->getUuid(),
+              ]),
             ],
           ],
         ],
@@ -83,6 +126,24 @@ class ConditionContainerForm implements ExpressionFormInterface {
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValue('table');
+    $component = $this->getRulesUiHandler()->getComponent();
+    /* @var $rule_expression \Drupal\rules\Plugin\RulesExpression\Rule */
+    $rule_expression = $component->getExpression();
+
+    foreach ($values as $uuid => $expression) {
+      $action = $rule_expression->getExpression($uuid);
+      $action->setWeight($expression['weight']);
+      $action->setConfiguration($action->getConfiguration());
+    }
+
+    $this->getRulesUiHandler()->updateComponent($component);
   }
 
 }
