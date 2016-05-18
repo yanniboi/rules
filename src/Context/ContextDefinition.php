@@ -21,6 +21,7 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
     'multiple' => 'isMultiple',
     'required' => 'isRequired',
     'default_value' => 'defaultValue',
+    'form_element' => 'formElement',
     'constraints' => 'constraints',
     'allow_null' => 'allowNull',
     'assignment_restriction' => 'assignmentRestriction',

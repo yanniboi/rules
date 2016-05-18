@@ -49,7 +49,7 @@ trait ContextFormTrait {
       $default_value = $context_definition->getDefaultValue();
     }
     $form['context'][$context_name]['setting'] = [
-      '#type' => 'textfield',
+      '#type' => isset($context_definition->formElement) ? $context_definition->formElement : 'textfield',
       '#title' => $title,
       '#required' => $context_definition->isRequired(),
       '#default_value' => $default_value,
