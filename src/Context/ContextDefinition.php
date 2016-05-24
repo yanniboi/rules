@@ -28,6 +28,13 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
   ];
 
   /**
+   * Type of form element to be used.
+   *
+   * @var string
+   */
+  protected $formElement = 'textfield';
+
+  /**
    * Whether the context value is allowed to be NULL or not.
    *
    * @var bool
