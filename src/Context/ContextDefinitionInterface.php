@@ -61,6 +61,24 @@ interface ContextDefinitionInterface extends ContextDefinitionInterfaceCore {
   public function setAssignmentRestriction($restriction);
 
   /**
+   * Determines form element for the context type.
+   *
+   * @return bool
+   *   Type of form element to be used.
+   */
+  public function getFormElement();
+
+  /**
+   * Sets the form element for context.
+   *
+   * @param string $form_element
+   *   Type of form element to be used.
+   *
+   * @return $this
+   */
+  public function setFormElement($form_element);
+
+  /**
    * Exports the definition as an array.
    *
    * @return array

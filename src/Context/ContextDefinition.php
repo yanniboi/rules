@@ -121,4 +121,19 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormElement() {
+    return $this->formElement;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFormElement($form_element) {
+    $this->formElement = $form_element;
+    return $this;
+  }
+
 }

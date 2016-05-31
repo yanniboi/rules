@@ -4,7 +4,7 @@ namespace Drupal\rules\Form\Expression;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Context\ContextConfig;
-use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
+use Drupal\rules\Context\ContextDefinitionInterface;
 
 /**
  * Provides form logic for handling contexts when configuring an expression.
@@ -49,7 +49,7 @@ trait ContextFormTrait {
       $default_value = $context_definition->getDefaultValue();
     }
     $form['context'][$context_name]['setting'] = [
-      '#type' => isset($context_definition->formElement) ? $context_definition->formElement : 'textfield',
+      '#type' => $context_definition->getFormElement(),
       '#title' => $title,
       '#required' => $context_definition->isRequired(),
       '#default_value' => $default_value,
@@ -58,6 +58,8 @@ trait ContextFormTrait {
     $element = &$form['context'][$context_name]['setting'];
 
     if ($mode == 'selector') {
+      // Always use a textfield for selector mode.
+      $element['#type'] = 'textfield';
       $element['#description'] = $this->t("The data selector helps you drill down into the data available to Rules. <em>To make entity fields appear in the data selector, you may have to use the condition 'entity has field' (or 'content is of type').</em> More useful tips about data selection is available in <a href=':url'>the online documentation</a>.", [
         ':url' => 'https://www.drupal.org/node/1300042',
       ]);
