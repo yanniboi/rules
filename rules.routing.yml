@@ -56,6 +56,7 @@ entity.rules_reaction_rule.enable:
     op: 'enable'
   requirements:
     _permission: 'administer rules+administer rules reactions'
+    _csrf_token: 'TRUE'
 
 entity.rules_reaction_rule.disable:
   path: '/admin/config/workflow/rules/reactions/disable/{rules_reaction_rule}'
@@ -64,6 +65,7 @@ entity.rules_reaction_rule.disable:
     op: 'disable'
   requirements:
     _permission: 'administer rules+administer rules reactions'
+    _csrf_token: 'TRUE'
 
 ### Rules Components
 entity.rules_component.collection:
